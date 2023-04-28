@@ -1,0 +1,33 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'com.google.devtools.ksp'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+// Omissible if your ksp plugin version is '1.8.0-1.0.9' or higher.
+kotlin.sourceSets.configureEach {
+    kotlin.srcDir("$buildDir/generated/ksp/$name/kotlin/")
+}
+
+//region tracer
+// options
+ksp{
+//    arg("tracer.internal", "")
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions.freeCompilerArgs += '-Xcontext-receivers'
+}
+
+dependencies {
+    // Keep this version latest with the prefix not higher than your kotlin version.
+    ksp 'io.github.apollokwok:tracer-common-compiler:1.7.20-1.2.0'
+    // Keep this version latest but not higher than the version above.
+    implementation 'io.github.apollokwok:tracer-common-annotations:1.7.20-1.2.0'
+}
+//endregion
